@@ -1,14 +1,13 @@
 package com.example.model
 
-import kotlinx.serialization.SerialName
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.util.UUID
+
 
 @Serializable
 class Habit (
-    val id: UUID,
+    val id: String,
     // TODO investigar
     // val userId: Int,
     val name: String,

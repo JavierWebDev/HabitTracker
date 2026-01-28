@@ -6,6 +6,7 @@ import com.example.model.Habit
 import com.example.model.dtos.CreateHabitRequest
 import com.example.services.HabitService
 import io.ktor.client.request.request
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
 import io.ktor.server.request.receive
 import io.ktor.server.response.*
@@ -18,9 +19,16 @@ fun Application.configureRouting() {
 
     routing {
         post("/habits/createHabit") {
-            val request = call.receive<CreateHabitRequest>()
-
-            habitService.createHabit(request)
+            try {
+                val request = call.receive<CreateHabitRequest>()
+                println("Request: $request")
+                val createdHabit = habitService.createHabit(request)
+                call.respond(HttpStatusCode.Created, createdHabit)
+            } catch (e: Exception) {
+                println("Error: ${e.message}")
+                e.printStackTrace()
+                call.respond(HttpStatusCode.BadRequest, e.message ?: "Error not known")
+            }
 
         }
     }

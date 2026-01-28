@@ -3,26 +3,32 @@ package com.example.database.repositories
 import com.example.model.Habit
 import com.example.model.HabitState
 import com.example.model.dtos.CreateHabitRequest
-import java.time.LocalDateTime
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import java.util.UUID
+import kotlinx.datetime.Clock
 
 class HabitRepositoryInMemory : HabitRepository {
     var habits = mutableListOf<Habit>()
 
-    override fun createHabit(request: CreateHabitRequest) {
+    override fun createHabit(request: CreateHabitRequest) : Habit {
+        val now = Clock.System.now().toLocalDateTime(TimeZone.of("America/Bogota"))
+
         val habit = Habit(
-            id = UUID.randomUUID(),
+            id = UUID.randomUUID().toString(),
             name = request.name,
             frequency = request.frequency,
             startDate = request.startDate,
             endDate = request.endDate,
             state = HabitState.ACTIVE,
-            createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now()
+            createdAt = now,
+            updatedAt = now
         )
 
         habits.add(habit)
 
+        return habit
     }
 
     override fun getAllHabits() : List<Habit> {
