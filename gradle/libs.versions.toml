@@ -1,0 +1,11 @@
+[versions]
+
+exposed = "1.0.0-rc-3"
+
+
+[libraries]
+
+exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
+exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
+
+
