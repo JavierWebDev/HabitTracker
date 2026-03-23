@@ -9,8 +9,11 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import kotlinx.datetime.Clock
+import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.minus
+import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertNotNull
@@ -29,6 +32,7 @@ class ApplicationTest {
         }
     }
 
+    val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
 
     @Test
     @DisplayName("createHabit returns the object with the correct values")
@@ -39,8 +43,8 @@ class ApplicationTest {
         val habitRequest = CreateHabitRequest(
             name = "test",
             frequency = listOf(DaysOfWeek.fromSerialName("1"), DaysOfWeek.fromSerialName("2")),
-            startDate = LocalDate(2025, 1, 1),
-            endDate = LocalDate(2025, 1, 30)
+            startDate = today,
+            endDate = today.plus(DatePeriod(days = 7)),
         )
 
         val createdHabit = habitService.createHabit(habitRequest, "test")
@@ -49,8 +53,8 @@ class ApplicationTest {
         assertEquals("test", createdHabit.name)
         assertEquals(2, createdHabit.frequency.size)
         assertEquals(HabitState.ACTIVE, createdHabit.state)
-        assertEquals(LocalDate(2025, 1, 1), createdHabit.startDate)
-        assertEquals(LocalDate(2025, 1, 30), createdHabit.endDate)
+        assertEquals(today, createdHabit.startDate)
+        assertEquals(today.plus(DatePeriod(days = 7)), createdHabit.endDate)
     }
 
     @Test
@@ -62,8 +66,8 @@ class ApplicationTest {
         val habitRequest = CreateHabitRequest(
             name = "test",
             frequency = listOf(DaysOfWeek.fromSerialName("1")),
-            startDate = LocalDate(2026, 3, 1),
-            endDate = LocalDate(2025, 12, 31)
+            startDate = today,
+            endDate = today.minus(DatePeriod(days = 7)),
         )
 
         assertFailsWith<IllegalArgumentException> { habitService.createHabit(habitRequest, "test") }
@@ -79,8 +83,8 @@ class ApplicationTest {
         val habitRequest = CreateHabitRequest(
             name = "test",
             frequency = listOf(DaysOfWeek.fromSerialName("1"), DaysOfWeek.fromSerialName("2")),
-            startDate = LocalDate(2026, 3, 1),
-            endDate = LocalDate(2026, 3, 6)
+            startDate = today,
+            endDate = today.plus(DatePeriod(days = 6)),
         )
 
         assertFailsWith<IllegalArgumentException> { habitService.createHabit(habitRequest, "test") }
@@ -95,8 +99,8 @@ class ApplicationTest {
         val habitRequest = CreateHabitRequest(
             name = "test",
             frequency = emptyList(),
-            startDate = LocalDate(2026, 3, 1),
-            endDate = LocalDate(2026, 3, 30)
+            startDate = today,
+            endDate = today.plus(DatePeriod(days = 7)),
         )
 
         assertFailsWith<IllegalArgumentException> { habitService.createHabit(habitRequest, "test") }
@@ -111,8 +115,8 @@ class ApplicationTest {
         val habitRequest = CreateHabitRequest(
             name = "",
             frequency = listOf(DaysOfWeek.fromSerialName("1"), DaysOfWeek.fromSerialName("2")),
-            startDate = LocalDate(2026, 3, 1),
-            endDate = LocalDate(2026, 3, 30)
+            startDate = today,
+            endDate = today.plus(DatePeriod(days = 7)),
         )
 
         assertFailsWith<IllegalArgumentException> { habitService.createHabit(habitRequest, "test") }
@@ -127,8 +131,8 @@ class ApplicationTest {
         val habitRequest = CreateHabitRequest(
             name = "test",
             frequency = listOf(DaysOfWeek.fromSerialName("1"), DaysOfWeek.fromSerialName("2")),
-            startDate = LocalDate(2026, 3, 1),
-            endDate = LocalDate(2026, 3, 30)
+            startDate = today.minus(DatePeriod(days = 1)),
+            endDate = today.plus(DatePeriod(days = 7)),
         )
 
         assertFailsWith<IllegalArgumentException> { habitService.createHabit(habitRequest, "test") }
