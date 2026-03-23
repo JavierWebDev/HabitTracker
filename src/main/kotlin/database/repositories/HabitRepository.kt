@@ -5,7 +5,7 @@ import com.example.model.dtos.CreateHabitRequest
 
 interface HabitRepository {
     fun getAllHabits(): List<Habit>
-    fun createHabit(request: CreateHabitRequest) : Habit
+    fun createHabit(request: CreateHabitRequest, userId: String) : Habit
     fun updateHabit(habit: Habit)
     fun deleteHabit(habit: Habit)
 }

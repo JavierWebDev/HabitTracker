@@ -37,5 +37,9 @@ dependencies {
 
     implementation("org.postgresql:postgresql:42.7.3")
 
+    // LOGGING
+
+    implementation("ch.qos.logback:logback-classic:${logback_version}")
+
 
 }

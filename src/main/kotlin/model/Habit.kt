@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 class Habit (
     val id: String,
     // TODO investigar
-    // val userId: Int,
+    val userId : String,
     val name: String,
     val frequency: List<DaysOfWeek>,
     val startDate: LocalDate,
