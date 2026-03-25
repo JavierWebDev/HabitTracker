@@ -25,11 +25,11 @@ fun Application.configureRouting() {
             try {
                 val request = call.receive<CreateHabitRequest>()
                 val userId = call.request.header("Authorization") ?: "aaa"
-                println("Request: $request Authorization: $userId")
+                log.info("Request: $request Authorization: $userId")
                 val createdHabit = habitService.createHabit(request, userId)
                 call.respond(HttpStatusCode.Created, createdHabit)
             } catch (e: Exception) {
-                println("Error: ${e.message}")
+                log.info("Error: ${e.message}")
                 e.printStackTrace()
                 call.respond(HttpStatusCode.BadRequest, e.message ?: "Error not known")
             }
