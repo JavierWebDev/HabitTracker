@@ -4,13 +4,13 @@ import com.example.database.repositories.HabitRepositoryInMemory
 import com.example.model.DaysOfWeek
 import com.example.model.HabitState
 import com.example.model.dtos.CreateHabitRequest
+import com.example.model.dtos.UpdateHabitRequest
 import com.example.services.HabitService
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DatePeriod
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
@@ -21,7 +21,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-class ApplicationTest {
+class HabitServiceTest {
     @Test
     fun testRoot() = testApplication {
         application {
@@ -33,6 +33,8 @@ class ApplicationTest {
     }
 
     val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+
+    /*  CREATE HABIT  */
 
     @Test
     @DisplayName("createHabit returns the object with the correct values")
@@ -136,6 +138,40 @@ class ApplicationTest {
         )
 
         assertFailsWith<IllegalArgumentException> { habitService.createHabit(habitRequest, "test") }
+    }
+
+    /*  UPDATE HABITS  */
+
+    @Test
+    @DisplayName("Returns the habit updated with the correct values")
+    fun checkHabitUpdated() {
+        val repo = HabitRepositoryInMemory()
+        val habitService = HabitService(repo)
+
+        val habitRequest = CreateHabitRequest(
+            name = "test",
+            frequency = listOf(DaysOfWeek.fromSerialName("1"), DaysOfWeek.fromSerialName("2")),
+            startDate = today,
+            endDate = today.plus(DatePeriod(days = 7)),
+        )
+
+        val created = habitService.createHabit(habitRequest, "test1")
+
+        val updateRequest = UpdateHabitRequest(
+            name = "test1",
+            frequency = listOf(DaysOfWeek.fromSerialName("1"), DaysOfWeek.fromSerialName("2"), DaysOfWeek.fromSerialName("3")),
+            startDate = today,
+            endDate = today.plus(DatePeriod(days = 14))
+        )
+
+        val updated = habitService.updateHabit(updateRequest, created.id)
+
+        assertEquals(created.id, updated.id)
+        assertEquals("test1", updated.name)
+        assertEquals(listOf(DaysOfWeek.fromSerialName("1"), DaysOfWeek.fromSerialName("2"), DaysOfWeek.fromSerialName("3")), updated.frequency)
+        assertEquals(today, updated.startDate)
+        assertEquals( today.plus(DatePeriod(days = 14)), updated.endDate)
+
     }
 
 }

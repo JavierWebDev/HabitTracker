@@ -3,6 +3,7 @@ package com.example.services
 import com.example.database.repositories.HabitRepository
 import com.example.model.Habit
 import com.example.model.dtos.CreateHabitRequest
+import com.example.model.dtos.UpdateHabitRequest
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.daysUntil
@@ -45,6 +46,10 @@ class HabitService(private val repo: HabitRepository) {
         if (request.startDate.daysUntil(now.date) > 0) {
             throw IllegalArgumentException("start date cant be in the past")
         }
+    }
+
+    fun updateHabit(request: UpdateHabitRequest, userId: String): Habit {
+        TODO()
     }
 
 }

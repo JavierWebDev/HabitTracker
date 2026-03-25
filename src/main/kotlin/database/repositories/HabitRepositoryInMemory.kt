@@ -3,6 +3,7 @@ package com.example.database.repositories
 import com.example.model.Habit
 import com.example.model.HabitState
 import com.example.model.dtos.CreateHabitRequest
+import com.example.model.dtos.UpdateHabitRequest
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import java.util.UUID
@@ -35,11 +36,11 @@ class HabitRepositoryInMemory : HabitRepository {
         return habits
     }
 
-    override fun updateHabit(habit: Habit) {
+    override fun updateHabit(request: UpdateHabitRequest) : Habit {
         TODO("Not yet implemented")
     }
 
-    override fun deleteHabit(habit: Habit) {
+    override fun deleteHabit(id: String) {
         TODO("Not yet implemented")
     }
 }
