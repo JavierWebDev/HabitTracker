@@ -7,14 +7,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class Habit (
-    val id: String,
+    var id: String,
     // TODO investigar
     val userId : String,
-    val name: String,
-    val frequency: List<DaysOfWeek>,
-    val startDate: LocalDate,
-    val endDate: LocalDate,
-    val state: HabitState,
-    val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime,
+    var name: String,
+    var frequency: List<DaysOfWeek>,
+    var startDate: LocalDate,
+    var endDate: LocalDate,
+    var state: HabitState,
+    var createdAt: LocalDateTime,
+    var updatedAt: LocalDateTime,
     )

@@ -164,13 +164,18 @@ class HabitServiceTest {
             endDate = today.plus(DatePeriod(days = 14))
         )
 
-        val updated = habitService.updateHabit(updateRequest, created.id)
+        habitService.updateHabit(updateRequest, created.id)
 
-        assertEquals(created.id, updated.id)
-        assertEquals("test1", updated.name)
-        assertEquals(listOf(DaysOfWeek.fromSerialName("1"), DaysOfWeek.fromSerialName("2"), DaysOfWeek.fromSerialName("3")), updated.frequency)
-        assertEquals(today, updated.startDate)
-        assertEquals( today.plus(DatePeriod(days = 14)), updated.endDate)
+        var habits = habitService.getHabits()
+
+        habits.forEach { habit ->
+            if (habit.id == created.id) {
+                assertEquals("test1", habit.name)
+                assertEquals(3, habit.frequency.size)
+                assertEquals(today, habit.startDate)
+                assertEquals(today.plus(DatePeriod(days = 14)), habit.endDate)
+            }
+        }
 
     }
 

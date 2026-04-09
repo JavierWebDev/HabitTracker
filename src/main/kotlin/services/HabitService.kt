@@ -12,6 +12,8 @@ import kotlinx.datetime.toLocalDateTime
 
 class HabitService(private val repo: HabitRepository) {
 
+    fun getHabits() : List<Habit> = repo.getAllHabits()
+
     fun createHabit(request: CreateHabitRequest, userId: String): Habit {
 
         if (userId.isBlank()) {
@@ -48,8 +50,8 @@ class HabitService(private val repo: HabitRepository) {
         }
     }
 
-    fun updateHabit(request: UpdateHabitRequest, userId: String): Habit {
-        TODO()
+    fun updateHabit(request: UpdateHabitRequest, userId: String) {
+        repo.updateHabit(request, userId)
     }
 
 }
