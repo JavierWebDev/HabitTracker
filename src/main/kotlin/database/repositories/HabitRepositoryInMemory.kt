@@ -4,17 +4,12 @@ import com.example.model.Habit
 import com.example.model.HabitState
 import com.example.model.dtos.CreateHabitRequest
 import com.example.model.dtos.UpdateHabitRequest
-import java.util.logging.Logger
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import java.util.UUID
 import kotlinx.datetime.Clock
 
 class HabitRepositoryInMemory : HabitRepository {
-
-    companion object {
-        private val log = Logger.getLogger(HabitRepositoryInMemory::class.java.name)
-    }
 
     var habits = mutableListOf<Habit>()
 
@@ -43,16 +38,14 @@ class HabitRepositoryInMemory : HabitRepository {
         return habits
     }
 
-    override fun updateHabit(request: UpdateHabitRequest, userId: String) {
+    override fun updateHabit(request: UpdateHabitRequest, habitId: String) {
         habits.forEach { habit ->
-            if (habit.id == userId) {
+            if (habit.id == habitId) {
                 habit.name = request.name
                 habit.frequency = request.frequency
                 habit.startDate = request.startDate
                 habit.endDate = request.endDate
                 habit.updatedAt = now
-
-                log.info("Habit updated: $habit")
             } else {
                 throw IllegalArgumentException("Habit not found")
             }

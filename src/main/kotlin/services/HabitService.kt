@@ -4,6 +4,7 @@ import com.example.database.repositories.HabitRepository
 import com.example.model.Habit
 import com.example.model.dtos.CreateHabitRequest
 import com.example.model.dtos.UpdateHabitRequest
+import java.util.logging.Logger
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.daysUntil
@@ -11,6 +12,8 @@ import kotlinx.datetime.periodUntil
 import kotlinx.datetime.toLocalDateTime
 
 class HabitService(private val repo: HabitRepository) {
+
+    val log = Logger.getLogger(HabitService::class.java.name)
 
     fun getHabits() : List<Habit> = repo.getAllHabits()
 
@@ -20,12 +23,16 @@ class HabitService(private val repo: HabitRepository) {
             throw IllegalArgumentException("User id can't be blank")
         }
 
-        validateHabitRequest(request)
+        validateCreateHabitRequest(request)
 
-        return repo.createHabit(request, userId)
+        val habit = repo.createHabit(request, userId)
+
+        log.info("New habit created\nhabitId: ${habit.id} \nuserId: ${habit.userId} \nname: ${habit.name}")
+
+        return habit
     }
 
-    fun validateHabitRequest(request: CreateHabitRequest) {
+    fun validateCreateHabitRequest(request: CreateHabitRequest) {
         val daysUntil = request.startDate.periodUntil(request.endDate).days
         val now = Clock.System.now().toLocalDateTime(TimeZone.of("America/Bogota"))
 
@@ -50,8 +57,13 @@ class HabitService(private val repo: HabitRepository) {
         }
     }
 
-    fun updateHabit(request: UpdateHabitRequest, userId: String) {
-        repo.updateHabit(request, userId)
+    fun updateHabit(request: UpdateHabitRequest, habitId: String) {
+        try {
+            repo.updateHabit(request, habitId)
+            log.info("Habit updated: $habitId")
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
 }

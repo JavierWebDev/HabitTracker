@@ -166,7 +166,7 @@ class HabitServiceTest {
 
         habitService.updateHabit(updateRequest, created.id)
 
-        var habits = habitService.getHabits()
+        val habits = habitService.getHabits()
 
         habits.forEach { habit ->
             if (habit.id == created.id) {
