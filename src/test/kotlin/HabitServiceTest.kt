@@ -156,6 +156,7 @@ class HabitServiceTest {
         )
 
         val created = habitService.createHabit(habitRequest, "test1")
+        habitService.createHabit(habitRequest, "test2")
 
         val updateRequest = UpdateHabitRequest(
             name = "test1",
