@@ -2,6 +2,7 @@ package com.example.database.repositories
 
 import com.example.model.Habit
 import com.example.model.HabitState
+import com.example.model.SimpleHashMap
 import com.example.model.dtos.CreateHabitRequest
 import com.example.model.dtos.UpdateHabitRequest
 import kotlinx.datetime.TimeZone
@@ -11,11 +12,10 @@ import kotlinx.datetime.Clock
 
 class HabitRepositoryInMemory : HabitRepository {
 
-    var habits = mutableListOf<Habit>()
-
-    val now = Clock.System.now().toLocalDateTime(TimeZone.of("America/Bogota"))
+    var habits = SimpleHashMap<String, Habit>()
 
     override fun createHabit(request: CreateHabitRequest, userId: String) : Habit {
+        val now = Clock.System.now().toLocalDateTime(TimeZone.of("America/Bogota"))
 
         val habit = Habit(
             id = UUID.randomUUID().toString(),
@@ -29,30 +29,40 @@ class HabitRepositoryInMemory : HabitRepository {
             updatedAt = now
         )
 
-        habits.add(habit)
+        habits.put(habit.id, habit)
 
         return habit
     }
 
     override fun getAllHabits() : List<Habit> {
-        return habits
+        return habits.values()
     }
 
-    override fun updateHabit(request: UpdateHabitRequest, habitId: String) {
-        habits.forEach { habit ->
-            if (habit.id == habitId) {
-                habit.name = request.name
-                habit.frequency = request.frequency
-                habit.startDate = request.startDate
-                habit.endDate = request.endDate
-                habit.updatedAt = now
-            } else {
-                throw IllegalArgumentException("Habit not found")
-            }
-         }
+    override fun updateHabit(request: UpdateHabitRequest, habitId: String, userId: String) {
+        val now = Clock.System.now().toLocalDateTime(TimeZone.of("America/Bogota"))
+
+        val existing = habits.get(habitId)
+
+        if (existing != null) {
+            val updatedHabit = Habit(
+                id = habitId,
+                userId = userId,
+                name = request.name,
+                frequency = request.frequency,
+                startDate = request.startDate,
+                endDate = request.endDate,
+                state = existing.state,
+                createdAt = existing.createdAt,
+                updatedAt = now
+            )
+
+            habits.put(habitId, updatedHabit)
+        } else {
+            throw NoSuchElementException("Habit not found: $habitId")
+        }
     }
 
     override fun deleteHabit(id: String) {
-        TODO("Not yet implemented")
+        habits.remove(id)
     }
 }

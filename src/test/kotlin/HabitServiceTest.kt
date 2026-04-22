@@ -165,7 +165,7 @@ class HabitServiceTest {
             endDate = today.plus(DatePeriod(days = 14))
         )
 
-        habitService.updateHabit(updateRequest, created.id)
+        habitService.updateHabit(updateRequest, created.id, created.userId)
 
         val habits = habitService.getHabits()
 

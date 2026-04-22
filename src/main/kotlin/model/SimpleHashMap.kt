@@ -2,7 +2,7 @@ package com.example.model
 
 import kotlin.math.abs
 
-class SimpleHashMap<K,V> (private val capacity : Int = 16) {
+class SimpleHashMap<K,V> (private val capacity : Int = 10) {
 
     private val table = Array(capacity) { mutableListOf<Pair<K, V>>() }
 

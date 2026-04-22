@@ -57,9 +57,9 @@ class HabitService(private val repo: HabitRepository) {
         }
     }
 
-    fun updateHabit(request: UpdateHabitRequest, habitId: String) {
+    fun updateHabit(request: UpdateHabitRequest, habitId: String, userId: String) {
         try {
-            repo.updateHabit(request, habitId)
+            repo.updateHabit(request, habitId, userId)
             log.info("Habit updated: $habitId")
         } catch (e: Exception) {
             e.printStackTrace()
