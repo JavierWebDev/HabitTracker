@@ -162,7 +162,8 @@ class HabitServiceTest {
             name = "test1",
             frequency = listOf(DaysOfWeek.fromSerialName("1"), DaysOfWeek.fromSerialName("2"), DaysOfWeek.fromSerialName("3")),
             startDate = today,
-            endDate = today.plus(DatePeriod(days = 14))
+            endDate = today.plus(DatePeriod(days = 14)),
+            createdAt = created.createdAt
         )
 
         habitService.updateHabit(updateRequest, created.id, created.userId)
