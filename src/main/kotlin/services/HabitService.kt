@@ -8,7 +8,6 @@ import java.util.logging.Logger
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.daysUntil
-import kotlinx.datetime.periodUntil
 import kotlinx.datetime.toLocalDateTime
 
 class HabitService(private val repo: HabitRepository) {
@@ -32,8 +31,18 @@ class HabitService(private val repo: HabitRepository) {
         return habit
     }
 
+    fun deleteHabit(habitId: String) {
+        repo.deleteHabit(habitId)
+        log.info("Habit: ${habitId} was deleted successfully")
+    }
+
+    fun updateHabit(request: UpdateHabitRequest, habitId: String, userId: String) {
+        repo.updateHabit(request, habitId, userId)
+        log.info("Habit updated: $habitId")
+    }
+
     fun validateCreateHabitRequest(request: CreateHabitRequest) {
-        val daysUntil = request.startDate.periodUntil(request.endDate).days
+        val daysUntil = request.startDate.daysUntil(request.endDate)
         val now = Clock.System.now().toLocalDateTime(TimeZone.of("America/Bogota"))
 
         if (request.endDate <= request.startDate) {
@@ -56,14 +65,4 @@ class HabitService(private val repo: HabitRepository) {
             throw IllegalArgumentException("start date cant be in the past")
         }
     }
-
-    fun updateHabit(request: UpdateHabitRequest, habitId: String, userId: String) {
-        try {
-            repo.updateHabit(request, habitId, userId)
-            log.info("Habit updated: $habitId")
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
 }

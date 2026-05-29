@@ -8,5 +8,5 @@ interface HabitRepository {
     fun getAllHabits(): List<Habit>
     fun createHabit(request: CreateHabitRequest, userId: String) : Habit
     fun updateHabit(request: UpdateHabitRequest, habitId: String, userId: String)
-    fun deleteHabit(habit: Habit)
+    fun deleteHabit(habitId: String)
 }

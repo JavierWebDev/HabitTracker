@@ -40,30 +40,31 @@ class HabitRepositoryInMemory : HabitRepository {
     override fun updateHabit(request: UpdateHabitRequest, habitId: String, userId: String) {
         val now = Clock.System.now().toLocalDateTime(TimeZone.of("America/Bogota"))
 
-        for (habit in habits) {
-            if (habit.id == habitId) {
-                val updatedHabit = Habit(
-                    id = habitId,
-                    userId = userId,
-                    name = request.name,
-                    frequency = request.frequency,
-                    startDate = request.startDate,
-                    endDate = request.endDate,
-                    state = HabitState.ACTIVE,
-                    createdAt = request.createdAt,
-                    updatedAt = now
-                )
+        val habit = habits.find { it.id == habitId }
+            ?: throw NoSuchElementException("Habit not found")
 
-                habits.remove(habit)
+        habits.remove(habit)
 
-                habits.add(updatedHabit)
-            } else {
-                throw IllegalArgumentException("Habit not found")
-            }
-        }
+        val updatedHabit = Habit(
+            id = habitId,
+            userId = userId,
+            name = request.name,
+            frequency = request.frequency,
+            startDate = request.startDate,
+            endDate = request.endDate,
+            state = HabitState.ACTIVE,
+            createdAt = request.createdAt,
+            updatedAt = now
+        )
+
+        habits.add(updatedHabit)
     }
 
-    override fun deleteHabit(habit: Habit) {
+    override fun deleteHabit(habitId: String) {
+
+        val habit = habits.find { it.id == habitId }
+            ?: throw NoSuchElementException("Habit not found")
+
         habits.remove(habit)
     }
 }

@@ -21,42 +21,35 @@ fun Application.configureRouting() {
             call.respond(HttpStatusCode.OK, "live")
         }
 
-        post("/habits/createHabit") {
+        post("/habits") {
             try {
                 val request = call.receive<CreateHabitRequest>()
                 val userId = call.request.header("Authorization") ?: "aaa"
                 log.info("Request: $request Authorization: $userId")
                 val createdHabit = habitService.createHabit(request, userId)
                 call.respond(HttpStatusCode.Created, createdHabit)
-            } catch (e: Exception) {
+            } catch (e: NoSuchElementException) {
                 log.info("Error: ${e.message}")
-                e.printStackTrace()
-                call.respond(HttpStatusCode.BadRequest, e.message ?: "Error not known")
+                call.respond(HttpStatusCode.NotFound, e.message ?: "Error not known")
+            } catch (e: IllegalArgumentException) {
+                log.info("Bad Request: ${e.message}")
+                call.respond(HttpStatusCode.BadRequest, e.message ?: "Bad request")
             }
         }
 
-        // Testing jeje
+        delete("/habits/{habitId}") {
+            try {
+                val habitId = call.parameters["habitId"]
+                    ?: return@delete call.respond(HttpStatusCode.BadRequest, "Missing habitId")
 
-//
-//        get("/habits/createHabit") {
-//            val habitReq = CreateHabitRequest(
-//                name = "Test Habit",
-//                frequency = listOf(DaysOfWeek.fromSerialName("1")),
-//                startDate = LocalDate.parse("2026-02-28"),
-//                endDate = LocalDate.parse("2026-03-02"),
-//            )
-//
-//            val testtoken = "asadas"
-//
-//            val createdHabit = habitService.createHabit(habitReq, testtoken)
-//
-//            println(createdHabit.userId)
-//            println(createdHabit.name)
-//            println(createdHabit.startDate.toString())
-//            println(createdHabit.endDate.toString())
-//            println(createdHabit.state.toString())
-//            println(createdHabit.frequency.toString())
-//            call.respond(HttpStatusCode.OK, createdHabit)
-//        }
+                habitService.deleteHabit(habitId)
+                log.info("Habit: $habitId was successfully deleted")
+                call.respond(HttpStatusCode.OK)
+
+            } catch (e: NoSuchElementException) {
+                log.info("Error: ${e.message}")
+                call.respond(HttpStatusCode.NotFound, "Missing habitId")
+            }
+        }
     }
 }
