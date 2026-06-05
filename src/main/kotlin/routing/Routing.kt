@@ -24,8 +24,14 @@ fun Application.configureRouting() {
         post("/habits") {
             try {
                 val request = call.receive<CreateHabitRequest>()
-                val userId = call.request.header("Authorization") ?: "aaa"
-                log.info("Request: $request Authorization: $userId")
+
+                val token = call.request.header("Authorization")
+                    ?: return@post call.respond(HttpStatusCode.Unauthorized, "Missing authorization")
+
+                log.info("Request: $request Authorization: $token")
+
+                val userId = token // TODO: extract from JWT once implemented
+
                 val createdHabit = habitService.createHabit(request, userId)
                 call.respond(HttpStatusCode.Created, createdHabit)
             } catch (e: NoSuchElementException) {
@@ -39,6 +45,9 @@ fun Application.configureRouting() {
 
         delete("/habits/{habitId}") {
             try {
+                call.request.header("Authorization")
+                    ?: return@delete call.respond(HttpStatusCode.Unauthorized, "Missing authorization")
+
                 val habitId = call.parameters["habitId"]
                     ?: return@delete call.respond(HttpStatusCode.BadRequest, "Missing habitId")
 
