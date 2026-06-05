@@ -21,6 +21,15 @@ fun Application.configureRouting() {
             call.respond(HttpStatusCode.OK, "live")
         }
 
+        get("/habits") {
+            val token = call.request.header("Authorization")
+                ?: return@get call.respond(HttpStatusCode.Unauthorized, "Missing authorization")
+
+            val habits = habitService.getHabits(token) //TODO: extract from JWT once implemented
+
+            call.respond(HttpStatusCode.OK, habits)
+        }
+
         post("/habits") {
             try {
                 val request = call.receive<CreateHabitRequest>()
@@ -56,7 +65,7 @@ fun Application.configureRouting() {
                 call.respond(HttpStatusCode.OK)
 
             } catch (e: NoSuchElementException) {
-                log.info("Error: ${e.message}")
+                log.info("Habit not found: ${e.message}")
                 call.respond(HttpStatusCode.NotFound, "Missing habitId")
             }
         }

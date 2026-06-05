@@ -14,7 +14,7 @@ class HabitService(private val repo: HabitRepository) {
 
     val log = Logger.getLogger(HabitService::class.java.name)
 
-    fun getHabits() : List<Habit> = repo.getAllHabits()
+    fun getHabits(userId: String) : List<Habit> = repo.getAllHabits(userId)
 
     fun createHabit(request: CreateHabitRequest, userId: String): Habit {
 

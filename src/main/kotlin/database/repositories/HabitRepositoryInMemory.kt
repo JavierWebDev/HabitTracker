@@ -33,8 +33,12 @@ class HabitRepositoryInMemory : HabitRepository {
         return habit
     }
 
-    override fun getAllHabits() : List<Habit> {
-        return habits
+    override fun getAllHabits(userId: String) : List<Habit> {
+        val userHabits = mutableListOf<Habit>()
+
+        habits.forEach { habit ->  if (habit.userId == userId) userHabits.add(habit) }
+
+        return userHabits
     }
 
     override fun updateHabit(request: UpdateHabitRequest, habitId: String, userId: String) {
