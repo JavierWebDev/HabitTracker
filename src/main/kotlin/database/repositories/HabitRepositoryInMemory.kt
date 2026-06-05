@@ -57,7 +57,7 @@ class HabitRepositoryInMemory : HabitRepository {
             startDate = request.startDate,
             endDate = request.endDate,
             state = HabitState.ACTIVE,
-            createdAt = request.createdAt,
+            createdAt = habit.createdAt,
             updatedAt = now
         )
 

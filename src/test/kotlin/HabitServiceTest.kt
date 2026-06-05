@@ -163,12 +163,11 @@ class HabitServiceTest {
             frequency = listOf(DaysOfWeek.fromSerialName("1"), DaysOfWeek.fromSerialName("2"), DaysOfWeek.fromSerialName("3")),
             startDate = today,
             endDate = today.plus(DatePeriod(days = 14)),
-            createdAt = created.createdAt
         )
 
         habitService.updateHabit(updateRequest, created.id, created.userId)
 
-        val habits = habitService.getHabits()
+        val habits = habitService.getHabits(created.userId)
 
         habits.forEach { habit ->
             if (habit.id == created.id) {

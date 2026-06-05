@@ -2,6 +2,7 @@ package com.example.routing
 
 import com.example.database.repositories.HabitRepositoryInMemory
 import com.example.model.dtos.CreateHabitRequest
+import com.example.model.dtos.UpdateHabitRequest
 import com.example.services.HabitService
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
@@ -26,8 +27,9 @@ fun Application.configureRouting() {
                 ?: return@get call.respond(HttpStatusCode.Unauthorized, "Missing authorization")
 
             val habits = habitService.getHabits(token) //TODO: extract from JWT once implemented
+            log.info("Habits: $habits")
 
-            call.respond(HttpStatusCode.OK, habits)
+            call.respond(HttpStatusCode.OK, habits.toString())
         }
 
         post("/habits") {
@@ -65,8 +67,27 @@ fun Application.configureRouting() {
                 call.respond(HttpStatusCode.OK)
 
             } catch (e: NoSuchElementException) {
-                log.info("Habit not found: ${e.message}")
+                log.error("Habit not found: ${e.message}")
                 call.respond(HttpStatusCode.NotFound, "Missing habitId")
+            }
+        }
+
+        put("habits/{habitId}") {
+            try {
+                val token = call.request.header("Authorization")
+                    ?: return@put call.respond(HttpStatusCode.Unauthorized, "Missing authorization")
+
+                val habitId = call.parameters["habitId"]
+                    ?: return@put call.respond(HttpStatusCode.BadRequest, "Missing habitId")
+
+                val request = call.receive<UpdateHabitRequest>()
+
+                habitService.updateHabit(request, habitId, token)
+                log.info("Habit $habitId has been succesfully updated")
+
+                call.respond(HttpStatusCode.OK)
+            } catch (e: Exception) {
+                log.error("${e.printStackTrace()}")
             }
         }
     }
