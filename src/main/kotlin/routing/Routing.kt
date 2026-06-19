@@ -90,5 +90,9 @@ fun Application.configureRouting() {
                 log.error("${e.printStackTrace()}")
             }
         }
+
+//        post("/auth") {
+//
+//        }
     }
 }
